@@ -1,0 +1,16 @@
+{
+    "DESIGN_NAME": "wave_grid_8x8",
+
+    "VERILOG_FILES": [
+        "dir::src/wave_cell.v",
+        "dir::src/wave_grid_8x8.v"
+    ],
+
+    "CLOCK_PORT": "clk",
+
+    "CLOCK_PERIOD": 10,
+
+    "FP_SIZING": "absolute",
+
+    "DIE_AREA": "0 0 1400 1400"
+}
