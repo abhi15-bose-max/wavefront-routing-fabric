@@ -1,3 +1,4 @@
+// Keep 2^COST_WIDTH > Max Path Length to prevent overflow rollover to 0
 module wave_cell #(
     parameter COST_WIDTH = 6
 )(
