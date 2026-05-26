@@ -1,55 +1,287 @@
-# Wavefront Routing Fabric
+# Asynchronous Wave Propagation Router (v1.0)
 
-A cellular-automata-inspired spatial routing fabric implemented in Verilog and synthesized using OpenLane and the SKY130 PDK.
-
-## Overview
-
-This project explores distributed shortest-path computation using a massively parallel wavefront propagation architecture.
-
-Each processing element (PE):
-- observes neighboring costs
-- computes minimum-distance propagation
-- evolves synchronously across the fabric
-
-The result is an emergent hardware routing system capable of:
-- shortest-path generation
-- obstacle-aware propagation
-- distributed spatial computation
+A Hardware-Native Spatial Computing Accelerator Implementing Parallel Shortest-Path Routing via Non-von Neumann Wavefront Propagation on an 8x8 Tiled Array.
 
 ---
 
-## Features
+# Core Architecture Paradigm
 
-- Distributed wavefront routing
-- Obstacle-aware propagation
-- Cellular automata-inspired architecture
-- Parallel spatial computation
-- Fully synthesizable Verilog RTL
-- OpenLane ASIC flow
-- SKY130 physical implementation
+Traditional pathfinding algorithms (such as Dijkstra or Breadth-First Search) execute sequentially inside von Neumann architectures. They depend heavily on centralized processing units tracking queues, looping through nodes, and continuously fetching graph states from memory.
 
----
+This architecture instead physicalizes the pathfinding grid into a distributed processing element (PE) array. By mapping coordinates directly to spatial silicon logic blocks, shortest paths emerge naturally as an electronic wave expanding through the network.
 
-## Repository Structure
+The system operates across two discrete design layers:
 
-- rtl/ → Verilog RTL
-- testbench/ → routing simulations
-- gds/ → final ASIC layouts
-- animations/ → wavefront propagation GIFs
-- docs/ → architectural writeups
-- openlane/ → ASIC synthesis configuration
+1. `wave_cell.v` (Processing Element): An autonomous local tile that samples directional cost buses, executes asynchronous minimal-cost evaluations, and registers local route back-pointers.
+
+2. `wave_grid_8x8.v` (Interconnect Fabric): A boundary-safe, 64-node spatial computing mesh that implements a static grid topology containing hardwired starting states, target nodes, and localized routing obstacles.
 
 ---
 
-## Physical Design
+## Distributed Interconnect Fabric Topology
 
-Generated using:
-- OpenLane
-- SKY130 PDK
-- KLayout
+```text
+       (0,0) Start             Boundary-Safe Interconnect Mesh
+     ┌─────────────┐        ┌─────────────┐        ┌─────────────┐
+     │  wave_cell  │◄──────►│  wave_cell  │◄──────►│  wave_cell  │
+     │ [r=0, c=0]  │        │ [r=0, c=1]  │        │ [r=0, c=2]  │
+     └──────┬──────┘        └──────┬──────┘        └──────┬──────┘
+            ▲                      ▲                      ▲
+            ▼                      ▼                      ▼
+     ┌──────┴──────┐        ┌──────┴──────┐        ┌──────┴──────┐
+     │  wave_cell  │◄──────►│  Obstacle   │◄──────►│  wave_cell  │
+     │ [r=1, c=0]  │        │    WALL     │        │ [r=1, c=2]  │
+     └─────────────┘        └─────────────┘        └─────────────┘
+```
 
 ---
 
-## Author
+# Cellular Automata & Localized Emergent Computing
 
-Abhinav Basu
+The architecture bypasses centralized coordination entirely. No single cell maintains a global perspective of the maze layout or the optimal trajectory. Instead, global shortest paths emerge organically from simple, localized boundary rules.
+
+| Hardware State Attribute | Architectural Component Implementation |
+|---|---|
+| Wavefront Reception Status | 1-bit active registration flag (`wave_out`) |
+| Localized Cost Accumulation | Parameterized cost-depth tracking register (`cost_reg`) |
+| Directional Back-Pointer | 2-bit local routing breadcrumb vector (`pointer_reg`) |
+| Spatial Interaction Mesh | Hardwired 4-directional neighborhood topology (North, South, East, West) |
+
+---
+
+# Core Cell Functional Mechanics
+
+Every individual cell operates as an autonomous node executing a state evaluation loop based on its designated type register (`type_reg`).
+
+---
+
+## Node Type Classifications
+
+### `FREE` (2'b00)
+
+Unallocated space available for wave propagation.
+
+Transitions from inactive to active upon receiving a valid cost signal from an adjacent neighbor.
+
+---
+
+### `WALL` (2'b01)
+
+Structural routing obstacles.
+
+These nodes suppress internal wave activation flags and force the wavefront to propagate around them.
+
+---
+
+### `START` (2'b10)
+
+The initial source cell.
+
+Hardwired to initialize immediately with an internal cost of `1`, functioning as the origin point of the routing wave.
+
+---
+
+### `TARGET` (2'b11)
+
+The intended destination cell.
+
+Acts as a normal routing element but designates the terminal boundary for external backtracking scripts.
+
+---
+
+# Parallel Minimal-Cost Selection Architecture
+
+When a wave approaches an unactivated cell from multiple directions simultaneously, combinational selection logic identifies the shortest incoming pathway by determining the minimum cost value.
+
+```text
+    north_cost ────────┐
+    south_cost ────────┼──► [ Combinational Minimum ] ──► min_neighbor_cost
+    east_cost  ────────┼──► [  Selection Engine   ]
+    west_cost  ────────┘                 │
+                                         ▼
+                                  best_direction
+```
+
+The cell executes an asynchronous, parallel reduction loop to isolate the lowest cost neighbor above zero:
+
+```verilog
+if (north_cost > 0 && north_cost <= min_neighbor_cost) begin
+    min_neighbor_cost = north_cost;
+    best_direction = DIR_NORTH;
+end
+```
+
+Once identified, the cell locks its state on the next clock cycle, increments the localized distance value, and registers the source direction to preserve a deterministic path back to the origin.
+
+---
+
+## Cost Update Rule
+
+```math
+\text{cost\_reg} \Leftarrow \text{min\_neighbor\_cost} + 1
+```
+
+---
+
+## Pointer Update Rule
+
+```math
+\text{pointer\_reg} \Leftarrow \text{best\_direction}
+```
+
+---
+
+# Interconnect Signal and Bus Mapping
+
+## `wave_cell` Processing Element Pinout
+
+```text
+                       ┌───────────────────────┐
+        clk / rst ────►│                       │──────► wave_out
+   [5:0] north_cost ──►│                       │
+   [5:0] south_cost ──►│       wave_cell       │──────► [5:0] cost_reg
+   [5:0] east_cost  ──►│   (Pixel Processor)   │
+   [5:0] west_cost  ──►│                       │──────► [1:0] pointer_reg
+   [1:0] type_reg  ───►│                       │
+                       └───────────────────────┘
+```
+
+---
+
+# Directional Pointer Bit-Mapping
+
+The directional back-pointer matches the following 2-bit binary configurations:
+
+- `2'b00` (`DIR_NORTH`) → shortest pathway approaches from the upper adjacent node
+- `2'b01` (`DIR_SOUTH`) → shortest pathway approaches from the lower adjacent node
+- `2'b10` (`DIR_EAST`) → shortest pathway approaches from the right adjacent node
+- `2'b11` (`DIR_WEST`) → shortest pathway approaches from the left adjacent node
+
+---
+
+# Interconnect Mesh Architecture & Hardcoded Layout
+
+The top-level `wave_grid_8x8.v` module instantiates 64 unique copies of the processing element using a Verilog `generate` loop block, flattening the structural interaction network into dense directional buses.
+
+---
+
+## Hardcoded Grid Geometry Configuration
+
+The internal matrix establishes a fixed layout test case mapped onto raw grid coordinates:
+
+- Source Node (`START`) → `(r == 0 && c == 0)` (Top-Left)
+- Destination Node (`TARGET`) → `(r == 7 && c == 7)` (Bottom-Right)
+- Obstacle Wall Structure → `r == 3` across columns `c == 1` through `c == 6`
+
+This creates a solid horizontal barrier in the center of the grid, forcing the wavefront to split and round the edges.
+
+---
+
+# Boundary Condition Isolation
+
+To prevent edge cells from reading invalid floating data, the array structure dynamically isolates perimeter nodes by grounding disconnected inputs.
+
+```verilog
+.north_cost((r == 0) ? 6'b0 :
+            cost_bus[idx_n*COST_WIDTH +: COST_WIDTH]),
+```
+
+---
+
+# Hardware Replication & Simulation Protocol
+
+Run this execution workflow inside your Linux terminal environment to compile the simulation and verify the spatial propagation wavefront using Icarus Verilog.
+
+---
+
+## Project Structure
+
+```text
+openlane/designs/wave_router/
+├── src/
+│   ├── wave_cell.v
+│   └── wave_grid_8x8.v
+└── tb/
+    └── tb_wave_router.v
+```
+
+---
+
+# Part 1: Project Subdirectory Setup
+
+```bash
+# Enter Windows Subsystem for Linux
+wsl
+
+# Initialize design source subdirectories
+cd ~/OpenLane/designs
+
+mkdir -p wave_router/src
+
+cd wave_router/src
+```
+
+---
+
+# Part 2: Building the Processing Node Elements
+
+```bash
+nano wave_cell.v
+```
+
+Paste the complete `wave_cell` Verilog source code into the editor.
+
+Save:
+```text
+CTRL + O
+```
+
+Exit:
+```text
+CTRL + X
+```
+
+---
+
+# Part 3: Assembling the Routing Interconnect Fabric
+
+```bash
+nano wave_grid_8x8.v
+```
+
+Paste the complete `wave_grid_8x8` fabric source code into the editor.
+
+Save and exit.
+
+---
+
+# Part 4: Compilation and Verification Execution
+
+```bash
+# Compile structural Verilog layers via Icarus Verilog
+
+iverilog -o sim_wave_router \
+wave_cell.v \
+wave_grid_8x8.v \
+../tb/tb_wave_router.v
+
+# Execute compiled structural simulation
+
+vvp sim_wave_router
+```
+
+---
+
+# Future Implementations
+
+- Dynamic SPI runtime grid-type configuration registers
+- High-dimensional 3D mesh fabric extensions
+- Variable-cost routing weights for variable terrain mapping
+- Dynamic backtracking state-machines implemented directly in silicon hardware
+- Massively scaled 64×64 processing element evaluation arrays
+
+---
+
+# Author
+
+**Abhinav Basu**
