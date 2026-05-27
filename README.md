@@ -28,6 +28,7 @@ A Hardware-Native Spatial Computing Accelerator Implementing Parallel Shortest-P
 
 ---
 
+
 # Single Processing Element (`wave_cell`)
 
 <p align="center">
