@@ -4,6 +4,56 @@ A Hardware-Native Spatial Computing Accelerator Implementing Parallel Shortest-P
 
 ---
 
+# Obstacle-Free Wavefront Propagation
+
+<p align="center">
+  <img src="wavefront.gif" width="750"/>
+</p>
+
+<p align="center">
+  Emergent shortest-path wave expansion across a fully traversable 8×8 routing fabric.
+</p>
+
+---
+
+# Obstacle-Aware Routing
+
+<p align="center">
+  <img src="obstacle_wavefront.gif" width="750"/>
+</p>
+
+<p align="center">
+  Wavefront dynamically rerouting around hardwired obstacle barriers using purely local propagation rules.
+</p>
+
+---
+
+# Single Processing Element (`wave_cell`)
+
+<p align="center">
+  <img src="wave_cell.png" width="350"/>
+</p>
+
+<p align="center">
+  Autonomous routing node implementing local cost evaluation, directional backtracking, and synchronous wave activation.
+</p>
+
+---
+
+# 8×8 Spatial Routing Fabric (`wave_grid_8x8`)
+
+<p align="center">
+  <img src="wave_grid_8x8.png" width="750"/>
+</p>
+
+<p align="center">
+  Full tiled routing mesh synthesized into SKY130 standard-cell ASIC layout.
+</p>
+
+---
+
+---
+
 # Core Architecture Paradigm
 
 Traditional pathfinding algorithms (such as Dijkstra or Breadth-First Search) execute sequentially inside von Neumann architectures. They depend heavily on centralized processing units tracking queues, looping through nodes, and continuously fetching graph states from memory.
