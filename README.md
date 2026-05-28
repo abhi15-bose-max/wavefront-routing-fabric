@@ -11,7 +11,7 @@ A Hardware-Native Spatial Computing Accelerator Implementing Parallel Shortest-P
 </p>
 
 <p align="center">
-  Emergent shortest-path wave expansion across a fully traversable 8×8 routing fabric.
+  Fig 1:- Emergent shortest-path wave expansion across a fully traversable 8×8 routing fabric.
 </p>
 
 ---
@@ -23,7 +23,7 @@ A Hardware-Native Spatial Computing Accelerator Implementing Parallel Shortest-P
 </p>
 
 <p align="center">
-  Wavefront dynamically rerouting around hardwired obstacle barriers using purely local propagation rules.
+  Fig 2:-Wavefront dynamically rerouting around hardwired obstacle barriers using purely local propagation rules.
 </p>
 
 ---
@@ -36,7 +36,7 @@ A Hardware-Native Spatial Computing Accelerator Implementing Parallel Shortest-P
 </p>
 
 <p align="center">
-  Autonomous routing node implementing local cost evaluation, directional backtracking, and synchronous wave activation.
+  Fig 3:-Autonomous routing node implementing local cost evaluation, directional backtracking, and synchronous wave activation.
 </p>
 
 ---
@@ -48,7 +48,7 @@ A Hardware-Native Spatial Computing Accelerator Implementing Parallel Shortest-P
 </p>
 
 <p align="center">
-  Full tiled routing mesh synthesized into SKY130 standard-cell ASIC layout.
+  Fig 4:-Full tiled routing mesh synthesized into SKY130 standard-cell ASIC layout.
 </p>
 
 ---
