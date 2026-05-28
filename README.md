@@ -72,14 +72,7 @@ The architecture supports:
 - scientific wave simulations
 - reconfigurable graph topologies
 
-However, several key distinctions remain.
 
-The KAIST implementation is proprietary:
-- no RTL source code is publicly available
-- no open ASIC flow exists
-- no reproducible RTL-to-GDSII infrastructure is provided
-
-Additionally, the KAIST design relies on analog tap-delay propagation for distance approximation and does not store explicit hardware directional back-pointers inside each processing element, requiring external post-processing to reconstruct final paths.
 
 Cellular automata-based hardware accelerators for parallel maze routing have also demonstrated large speedups over sequential implementations using FPGA-based wave propagation systems. However, these designs typically:
 - use fixed routing geometries
