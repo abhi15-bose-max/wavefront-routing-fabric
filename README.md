@@ -95,33 +95,8 @@ Similarly, FPGA wavefront accelerators for bioinformatics sequence alignment app
 
 ---
 
-## Distinction From Prior Work
 
-This work differs from prior architectures in several important ways:
 
-1. **Open-Source RTL-to-GDSII Flow**  
-   This repository provides a fully reproducible open-source ASIC implementation synthesized using OpenLane and SKY130, unlike prior proprietary wavefront accelerator chips.
-
-2. **Digital Register-Based Distance Propagation**  
-   The architecture uses explicit synchronous 6-bit cost registers rather than analog tap-delay approximations, enabling deterministic integer path costs.
-
-3. **Hardware Directional Backtracking**  
-   Each processing element stores a 2-bit directional breadcrumb pointer, enabling direct hardware-level shortest-path reconstruction.
-
-4. **Obstacle-Aware Spatial Evolution**  
-   The routing fabric supports hardwired obstacle barriers and localized rerouting behavior through distributed neighbor interactions.
-
-5. **Cellular Automata-Inspired Distributed Computation**  
-   Global shortest-path behavior emerges entirely from localized nearest-neighbor propagation without centralized route controllers or global routing tables.
-
-6. **FPGA-Portable and MPW-Ready Architecture**  
-   The design remains synthesizable using standard RTL flows and is directly portable to FPGA platforms and Efabless MPW shuttle infrastructure.
-
----
-
-This architecture therefore represents a hardware-native, spatially distributed, and reproducible approach toward shortest-path acceleration and emergent routing computation in silicon.
-
----
 
 # Obstacle-Free Wavefront Propagation
 
