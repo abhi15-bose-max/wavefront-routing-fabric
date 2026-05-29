@@ -5,41 +5,6 @@ A Hardware-Native Spatial Computing Accelerator Implementing Parallel Shortest-P
 ---
 
 
-# Related Work
-
-Wavefront propagation for shortest-path routing has its theoretical foundation in the Lee algorithm (1961), a breadth-first search approach that expands a wavefront from a source node to find the shortest path in a grid. Traditional implementations execute this algorithm sequentially on von Neumann architectures, requiring centralized processing units to track queues, loop through nodes, and continuously fetch graph states from memory.
-
-The closest prior work to our architecture is the *Time-Domain Wavefront Computing Accelerator* developed by the KAIST VLSI Lab, published in IEEE CICC 2021 and later extended in the *IEEE Journal of Solid-State Circuits* (2023). This 32×32 reconfigurable processing element (PE) array accelerator implements true time-domain wavefront propagation where signal delay itself represents spatial distance.
-
-The KAIST chip, fabricated in 65-nm CMOS with a 1×1 mm² die area, achieves:
-- 1.6 G edges/second search throughput
-- 776 pJ per task energy efficiency
-- rising-edge propagation-based shortest-path computation
-
-Unlike heuristic algorithms such as A*, the KAIST accelerator performs shortest-path discovery through direct wave propagation without explicit distance estimation.
-
-The architecture supports:
-- shortest-path searching
-- maze solving
-- scientific wave simulations
-- reconfigurable graph topologies
-
-
-
-Cellular automata-based hardware accelerators for parallel maze routing have also demonstrated large speedups over sequential implementations using FPGA-based wave propagation systems. However, these designs typically:
-- use fixed routing geometries
-- lack programmable obstacle mapping
-- omit directional backtrace metadata
-- target FPGA-only implementations
-
-Other parallelized pathfinding systems such as DuckPGQ (2024) focus primarily on GPU software acceleration rather than hardware-native spatial propagation fabrics.
-
-Asynchronous Network-on-Chip (NoC) routers have explored mesh communication topologies with asynchronous handshaking and distributed packet transport. However, these systems optimize communication flow rather than shortest-path computation itself.
-
-Similarly, FPGA wavefront accelerators for bioinformatics sequence alignment apply wave propagation principles to dynamic programming problems rather than spatial routing.
-
----
-
 
 
 
