@@ -4,54 +4,6 @@ A Hardware-Native Spatial Computing Accelerator Implementing Parallel Shortest-P
 
 ---
 
-# Abstract
-
-This work presents a hardware-native wavefront propagation accelerator implemented as a distributed spatial processing fabric composed of locally interconnected processing elements (`wave_cell`). Unlike conventional shortest-path algorithms executed sequentially on von Neumann architectures, the proposed system physicalizes routing directly into silicon using a synchronous nearest-neighbor propagation mesh.
-
-Each processing element autonomously evaluates incoming directional cost signals, selects the minimum propagated path through local combinational reduction logic, updates an internal distance register, and stores a directional back-pointer for deterministic hardware backtracing. Global shortest-path solutions emerge naturally from synchronized local interactions without requiring centralized queues, routing tables, arbitration networks, or heuristic estimators.
-
-The architecture supports:
-- obstacle-aware routing
-- distributed cost-field evolution
-- programmable cost-depth scaling
-- hardware directional breadcrumb tracking
-- massively parallel spatial propagation
-
-The system was implemented in synthesizable Verilog RTL, verified through cycle-accurate simulation using Icarus Verilog, and synthesized through the OpenLane ASIC flow targeting the SKY130 standard-cell process.
-
-Unlike prior proprietary wavefront accelerators, this repository provides a fully open-source RTL-to-GDSII implementation including:
-- RTL source code
-- simulation infrastructure
-- obstacle-routing demonstrations
-- ASIC layout artifacts
-- OpenLane integration scripts
-
-This work demonstrates a Cellular Automata-inspired approach toward shortest-path computation, spatial graph traversal, and non-von Neumann routing fabrics implemented directly in digital silicon hardware.
-
----
-
-# Keywords
-
-- Wavefront Propagation
-- Spatial Computing
-- Cellular Automata
-- Shortest Path Routing
-- Non-von Neumann Computing
-- Processing Element Arrays
-- Hardware Pathfinding
-- Parallel Routing
-- Distributed Computing
-- ASIC Design
-- OpenLane
-- SKY130
-- Emergent Computation
-- Hardware BFS
-- Maze Routing
-- Graph Acceleration
-- Silicon Compute Fabrics
-- Spatial Algorithms
-
----
 
 # Related Work
 
