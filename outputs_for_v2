@@ -1,0 +1,165 @@
+=================================================
+STARTING TB1: BASIC PROPAGATION (UNIFORM FIELDS)
+=================================================
+
+--- CURRENT ACCELERATOR GRID FIELD STATE ---
+
+[ARRIVAL TIMESTAMPS FIELD]
+   0   1   2   3   4   5   6   7
+   1   2   3   4   5   6   7   8
+   2   3   4   5   6   7   8   9
+   3   4   5   6   7   8   9  10
+   4   5   6   7   8   9  10  11
+   5   6   7   8   9  10  11  12
+   6   7   8   9  10  11  12  13
+   7   8   9  10  11  12  13  14
+
+[ACCUMULATED PATH COSTS FIELD]
+   1   2   3   4   5   6   7   8
+   2   3   4   5   6   7   8   9
+   3   4   5   6   7   8   9  10
+   4   5   6   7   8   9  10  11
+   5   6   7   8   9  10  11  12
+   6   7   8   9  10  11  12  13
+   7   8   9  10  11  12  13  14
+   8   9  10  11  12  13  14  15
+
+[BACK-POINTER ARROWS FIELD] (0:N, 1:S, 2:E, 3:W)
+   0   3   3   3   3   3   3   3
+   0   3   3   3   3   3   3   3
+   0   3   3   3   3   3   3   3
+   0   3   3   3   3   3   3   3
+   0   3   3   3   3   3   3   3
+   0   3   3   3   3   3   3   3
+   0   3   3   3   3   3   3   3
+   0   3   3   3   3   3   3   3
+------------------------------------------------
+
+=================================================
+STARTING TB2: OBSTACLE PATH BENDING PROFILE
+=================================================
+
+--- CURRENT ACCELERATOR GRID FIELD STATE ---
+
+[ARRIVAL TIMESTAMPS FIELD]
+   0   1   2   3   4   5   6   7
+   1   2   3   4   5   6   7   8
+   2   3   4   5   6   7   8   9
+   3   0   0   0   0   0   0  10
+   4   5   6   7   8   9  10  11
+   5   6   7   8   9  10  11  12
+   6   7   8   9  10  11  12  13
+   7   8   9  10  11  12  13  14
+
+[ACCUMULATED PATH COSTS FIELD]
+   1   2   3   4   5   6   7   8
+   2   3   4   5   6   7   8   9
+   3   4   5   6   7   8   9  10
+   4   0   0   0   0   0   0  11
+   5   6   7   8   9  10  11  12
+   6   7   8   9  10  11  12  13
+   7   8   9  10  11  12  13  14
+   8   9  10  11  12  13  14  15
+
+[BACK-POINTER ARROWS FIELD] (0:N, 1:S, 2:E, 3:W)
+   0   3   3   3   3   3   3   3
+   0   3   3   3   3   3   3   3
+   0   3   3   3   3   3   3   3
+   0   .   .   .   .   .   .   0
+   0   3   3   3   3   3   3   3
+   0   3   3   3   3   3   3   3
+   0   3   3   3   3   3   3   3
+   0   3   3   3   3   3   3   3
+------------------------------------------------
+
+=================================================
+STARTING TB3: VARIABLE WEIGHTED TERRAIN PROFILE
+=================================================
+
+--- CURRENT ACCELERATOR GRID FIELD STATE ---
+
+[ARRIVAL TIMESTAMPS FIELD]
+   0   1   2   3   4   5   6   7
+   1   2   3   4   5   6   7   8
+   2   3   4   5   6   7   8   9
+   3   4   5   6   7   8   9  10
+   4   5   6   7   8   9  10  11
+   5   6   7   8   9  10  11  12
+   6   7   8   9  10  11  12  13
+   7   8   9  10  11  12  13  14
+
+[ACCUMULATED PATH COSTS FIELD]
+   1   2   3   4   5   6   7   8
+   2   3   4   5   6   7   8   9
+   3   4  14  15  16  17   9  10
+   4   5  15  25  26  27  10  11
+   5   6  16  26  36  37  11  12
+   6   7  17  27  37  47  12  13
+   7   8   9  10  11  12  13  14
+   8   9  10  11  12  13  14  15
+
+[BACK-POINTER ARROWS FIELD] (0:N, 1:S, 2:E, 3:W)
+   0   3   3   3   3   3   3   3
+   0   3   3   3   3   3   3   3
+   0   3   3   0   0   0   0   3
+   0   3   3   3   0   0   0   3
+   0   3   3   3   3   0   0   3
+   0   3   3   3   3   3   0   3
+   0   3   3   3   3   3   3   3
+   0   3   3   3   3   3   3   3
+------------------------------------------------
+
+=================================================
+STARTING TB4: TIMESTAMP CAPTURE ACCURACY TEST
+=================================================
+Sampling Cell (1,1) timestamp freeze stability over active cycles:
+   Cycle Window Counter: 0 | Cell(1,1) Active Waveout: 0 | Latched Timestamp:   0
+   Cycle Window Counter: 1 | Cell(1,1) Active Waveout: 0 | Latched Timestamp:   0
+   Cycle Window Counter: 2 | Cell(1,1) Active Waveout: 1 | Latched Timestamp:   2
+   Cycle Window Counter: 3 | Cell(1,1) Active Waveout: 1 | Latched Timestamp:   2
+   Cycle Window Counter: 4 | Cell(1,1) Active Waveout: 1 | Latched Timestamp:   2
+   Cycle Window Counter: 5 | Cell(1,1) Active Waveout: 1 | Latched Timestamp:   2
+[ACCELERATOR] TB4 Completed Execution clean.
+
+=================================================
+STARTING TB5: CPU RUNTIME MAP PROGRAMMABILITY
+=================================================
+[ACCELERATOR] Custom remapped computation completed.
+
+--- CURRENT ACCELERATOR GRID FIELD STATE ---
+
+[ARRIVAL TIMESTAMPS FIELD]
+   4   3   2   3   4   5   6   7
+   3   2   1   2   3   4   5   6
+   2   1   0   1   2   3   4   5
+   3   2   0   0   3   4   5   6
+   4   3   4   5   4   5   6   7
+   5   4   5   6   5   6   7   0
+   6   5   6   7   6   7   0   0
+   7   6   7   0   7   0   0   0
+
+[ACCUMULATED PATH COSTS FIELD]
+   5   4   3   4   5   6   7   8
+   4   3   2   3   4   5   6   7
+   3   2   1   2   3   4   5   6
+   4   3   0   0   4   5   6   7
+   5   4   5   6   5   6   7   8
+   6   5   6   7   6   7   8   0
+   7   6   7   8   7   8   0   0
+   8   7   8   0   8   0   0   0
+
+[BACK-POINTER ARROWS FIELD] (0:N, 1:S, 2:E, 3:W)
+   2   2   1   3   3   3   3   3
+   2   2   1   3   3   3   3   3
+   2   2   0   3   3   3   3   3
+   2   0   .   .   0   3   3   3
+   2   0   3   3   0   3   3   3
+   2   0   3   3   0   3   3   .
+   2   0   3   3   0   3   .   .
+   2   0   3   .   0   .   .   .
+------------------------------------------------
+
+=================================================
+ALL 5 ACCELERATOR TEST ARCHITECTURES EXECUTED SUCCESSFULLY.
+=================================================
+tb_wave_grid_v2.v:224: $finish called at 4746000 (1ps)
