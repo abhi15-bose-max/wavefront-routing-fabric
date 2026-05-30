@@ -1,339 +1,381 @@
-# Asynchronous Wave Propagation Router (v1.0)
+# Wavefront Routing Fabric v2
 
-A Hardware-Native Spatial Computing Accelerator Implementing Parallel Shortest-Path Routing via Non-von Neumann Wavefront Propagation on an 8x8 Tiled Array.
-
----
-
-
-
-
-
-# Obstacle-Free Wavefront Propagation
-
-<p align="center">
-  <img src="wavefront.gif" width="750"/>
-</p>
-
-<p align="center">
-  Fig 1:- Emergent shortest-path wave expansion across a fully traversable 8×8 routing fabric.
-</p>
+A Runtime-Programmable Spatial Routing Accelerator implementing distributed wavefront path planning, terrain-aware cost propagation, arrival-time encoding, and hardware backtrace generation on an 8×8 processing-element mesh.
 
 ---
 
-# Obstacle-Aware Routing
+## Overview
 
-<p align="center">
-  <img src="obstacle_wavefront.gif" width="750"/>
-</p>
+Traditional pathfinding algorithms such as Breadth-First Search (BFS), Dijkstra, and A* execute sequentially on von Neumann processors. They repeatedly fetch graph state from memory, evaluate neighboring nodes, and update centralized data structures.
 
-<p align="center">
-  Fig 2:-Wavefront dynamically rerouting around hardwired obstacle barriers using purely local propagation rules.
-</p>
+This project explores an alternative hardware-native paradigm.
+
+Instead of executing a pathfinding algorithm on a processor, the graph itself is physically instantiated as a spatial array of interacting processing elements (PEs). Path discovery emerges through local wave propagation, allowing all nodes to evaluate simultaneously.
+
+The resulting architecture behaves as a programmable routing accelerator where shortest paths emerge directly from distributed hardware dynamics.
 
 ---
 
+# Verification Demonstrations
 
-# Single Processing Element (`wave_cell`)
+## TB1 — Uniform Propagation
 
 <p align="center">
-  <img src="wave_cell.png" width="350"/>
+  <img src="TB1_uniform_propagation.gif" width="750"/>
 </p>
 
 <p align="center">
-  Fig 3:-Autonomous routing node implementing local cost evaluation, directional backtracking, and synchronous wave activation.
+  Fig 1:- Uniform-cost wavefront expansion across the complete 8×8 mesh.
 </p>
 
 ---
 
-# 8×8 Spatial Routing Fabric (`wave_grid_8x8`)
+## TB2 — Obstacle-Aware Routing
 
 <p align="center">
-  <img src="wave_grid_8x8.png" width="750"/>
+  <img src="TB2_obstacle_bending.gif" width="750"/>
 </p>
 
 <p align="center">
-  Fig 4:-Full tiled routing mesh synthesized into SKY130 standard-cell ASIC layout.
+  Fig 2:- Dynamic obstacle avoidance through purely local propagation rules.
 </p>
 
 ---
 
----
+## TB3 — Weighted Terrain Routing
 
-# Core Architecture Paradigm
+<p align="center">
+  <img src="TB3_weighted_terrain.gif" width="750"/>
+</p>
 
-Traditional pathfinding algorithms (such as Dijkstra or Breadth-First Search) execute sequentially inside von Neumann architectures. They depend heavily on centralized processing units tracking queues, looping through nodes, and continuously fetching graph states from memory.
-
-This architecture instead physicalizes the pathfinding grid into a distributed processing element (PE) array. By mapping coordinates directly to spatial silicon logic blocks, shortest paths emerge naturally as an electronic wave expanding through the network.
-
-The system operates across two discrete design layers:
-
-1. `wave_cell.v` (Processing Element): An autonomous local tile that samples directional cost buses, executes asynchronous minimal-cost evaluations, and registers local route back-pointers.
-
-2. `wave_grid_8x8.v` (Interconnect Fabric): A boundary-safe, 64-node spatial computing mesh that implements a static grid topology containing hardwired starting states, target nodes, and localized routing obstacles.
+<p align="center">
+  Fig 3:- High-cost terrain regions distort accumulated path cost while preserving arrival-time ordering.
+</p>
 
 ---
 
-## Distributed Interconnect Fabric Topology
+## TB5 — Runtime Map Reconfiguration
+
+<p align="center">
+  <img src="TB5_runtime_remapping.gif" width="750"/>
+</p>
+
+<p align="center">
+  Fig 4:- Runtime relocation of START, TARGET, and obstacle nodes through the configuration interface.
+</p>
+
+---
+
+# Architectural Evolution
+
+| Capability | Router v1 | Router v2 |
+|------------|-----------|-----------|
+| Static Routing | ✓ | ✓ |
+| Runtime Configuration | ✗ | ✓ |
+| Obstacle Programming | Hardcoded | Runtime |
+| Terrain Costs | ✗ | ✓ |
+| Arrival Timestamps | ✗ | ✓ |
+| Launch/Done Handshake | ✗ | ✓ |
+| Cost Field Readback | ✓ | ✓ |
+| Pointer Field Readback | ✓ | ✓ |
+| Timestamp Field Readback | ✗ | ✓ |
+
+---
+
+# Core Architectural Idea
+
+Every processing element represents a single grid coordinate.
+
+Each node interacts only with its four immediate neighbors:
 
 ```text
-       (0,0) Start             Boundary-Safe Interconnect Mesh
-     ┌─────────────┐        ┌─────────────┐        ┌─────────────┐
-     │  wave_cell  │◄──────►│  wave_cell  │◄──────►│  wave_cell  │
-     │ [r=0, c=0]  │        │ [r=0, c=1]  │        │ [r=0, c=2]  │
-     └──────┬──────┘        └──────┬──────┘        └──────┬──────┘
-            ▲                      ▲                      ▲
-            ▼                      ▼                      ▼
-     ┌──────┴──────┐        ┌──────┴──────┐        ┌──────┴──────┐
-     │  wave_cell  │◄──────►│  Obstacle   │◄──────►│  wave_cell  │
-     │ [r=1, c=0]  │        │    WALL     │        │ [r=1, c=2]  │
-     └─────────────┘        └─────────────┘        └─────────────┘
+North
+  ↑
+West ← Cell → East
+  ↓
+South
+```
+
+No node possesses a global view of the environment.
+
+Global shortest paths emerge from purely local interactions.
+
+---
+
+# Processing Element Architecture
+
+<p align="center">
+  <img src="wave_cell_v2.png" width="450"/>
+</p>
+
+<p align="center">
+  Fig 5:- Wavefront processing element with terrain weighting and timestamp capture.
+</p>
+
+Each processing element maintains the following local state:
+
+```text
+wave_out         1 bit
+cost_reg         6 bits
+pointer_reg      2 bits
+timestamp_reg    8 bits
+terrain_weight   4 bits
 ```
 
 ---
 
-# Cellular Automata & Localized Emergent Computing
+# 8×8 Routing Fabric
 
-The architecture bypasses centralized coordination entirely. No single cell maintains a global perspective of the maze layout or the optimal trajectory. Instead, global shortest paths emerge organically from simple, localized boundary rules.
+<p align="center">
+  <img src="wave_grid_v2.png" width="800"/>
+</p>
 
-| Hardware State Attribute | Architectural Component Implementation |
-|---|---|
-| Wavefront Reception Status | 1-bit active registration flag (`wave_out`) |
-| Localized Cost Accumulation | Parameterized cost-depth tracking register (`cost_reg`) |
-| Directional Back-Pointer | 2-bit local routing breadcrumb vector (`pointer_reg`) |
-| Spatial Interaction Mesh | Hardwired 4-directional neighborhood topology (North, South, East, West) |
+<p align="center">
+  Fig 6:- Runtime-programmable spatial routing mesh.
+</p>
 
----
-
-# Core Cell Functional Mechanics
-
-Every individual cell operates as an autonomous node executing a state evaluation loop based on its designated type register (`type_reg`).
-
----
-
-## Node Type Classifications
-
-### `FREE` (2'b00)
-
-Unallocated space available for wave propagation.
-
-Transitions from inactive to active upon receiving a valid cost signal from an adjacent neighbor.
-
----
-
-### `WALL` (2'b01)
-
-Structural routing obstacles.
-
-These nodes suppress internal wave activation flags and force the wavefront to propagate around them.
-
----
-
-### `START` (2'b10)
-
-The initial source cell.
-
-Hardwired to initialize immediately with an internal cost of `1`, functioning as the origin point of the routing wave.
-
----
-
-### `TARGET` (2'b11)
-
-The intended destination cell.
-
-Acts as a normal routing element but designates the terminal boundary for external backtracking scripts.
-
----
-
-# Parallel Minimal-Cost Selection Architecture
-
-When a wave approaches an unactivated cell from multiple directions simultaneously, combinational selection logic identifies the shortest incoming pathway by determining the minimum cost value.
+The top-level fabric contains:
 
 ```text
-    north_cost ────────┐
-    south_cost ────────┼──► [ Combinational Minimum ] ──► min_neighbor_cost
-    east_cost  ────────┼──► [  Selection Engine   ]
-    west_cost  ────────┘                 │
-                                         ▼
-                                  best_direction
+64 Processing Elements
+4-Way Neighbor Connectivity
+Runtime Configuration Plane
+Global Timestamp Counter
+Launch/Done Interface
+Multi-Bus Readback Network
 ```
 
-The cell executes an asynchronous, parallel reduction loop to isolate the lowest cost neighbor above zero:
+---
+
+# Runtime Configuration Interface
+
+Unlike the original implementation, routing maps are no longer hardcoded into RTL.
+
+A host processor dynamically programs:
+
+```text
+FREE cells
+WALL cells
+START nodes
+TARGET nodes
+Terrain weights
+```
+
+through the configuration interface.
+
+## Configuration Signals
 
 ```verilog
-if (north_cost > 0 && north_cost <= min_neighbor_cost) begin
-    min_neighbor_cost = north_cost;
-    best_direction = DIR_NORTH;
-end
+cfg_write_en
+cfg_type_data
+cfg_weight_data
 ```
 
-Once identified, the cell locks its state on the next clock cycle, increments the localized distance value, and registers the source direction to preserve a deterministic path back to the origin.
+---
+
+# Launch / Done Handshake
+
+The accelerator behaves like a standalone hardware engine.
+
+```text
+CPU
+ ↓
+Program Grid
+ ↓
+Program Terrain
+ ↓
+Assert Launch
+ ↓
+Wavefront Execution
+ ↓
+Target Reached
+ ↓
+Done Signal
+ ↓
+Read Results
+```
+
+---
+
+# Arrival-Time Encoding
+
+A major addition in Router v2 is distributed timestamp capture.
+
+Each processing element records the first cycle at which the routing wave reaches the cell.
+
+```verilog
+timestamp_reg <= global_time;
+```
+
+The timestamp is captured only once.
+
+Subsequent arrivals are ignored.
+
+---
+
+## Timestamp Field
+
+Represents:
+
+```text
+When was this cell reached?
+```
+
+Example:
+
+```text
+0 1 2 3
+1 2 3 4
+2 3 4 5
+3 4 5 6
+```
+
+---
+
+# Terrain-Aware Cost Propagation
+
+Each cell possesses an independent terrain weight.
+
+Examples:
+
+```text
+Road     = 1
+Grass    = 3
+Sand     = 5
+Swamp    = 10
+```
+
+Cost accumulation follows:
+
+```text
+cost =
+minimum_neighbor_cost
++
+terrain_weight
+```
 
 ---
 
 ## Cost Update Rule
 
 ```math
-\text{cost\_reg} \Leftarrow \text{min\_neighbor\_cost} + 1
+Cost_{cell}
+=
+\min(NeighborCosts)
++
+TerrainWeight
 ```
 
 ---
 
-## Pointer Update Rule
+# Cost vs Timestamp
 
-```math
-\text{pointer\_reg} \Leftarrow \text{best\_direction}
-```
+One of the most interesting observations from the verification suite is that arrival time and path cost become different information fields once terrain weighting is introduced.
 
----
+## Timestamp Field
 
-# Interconnect Signal and Bus Mapping
-
-## `wave_cell` Processing Element Pinout
+Measures:
 
 ```text
-                       ┌───────────────────────┐
-        clk / rst ────►│                       │──────► wave_out
-   [5:0] north_cost ──►│                       │
-   [5:0] south_cost ──►│       wave_cell       │──────► [5:0] cost_reg
-   [5:0] east_cost  ──►│   (Pixel Processor)   │
-   [5:0] west_cost  ──►│                       │──────► [1:0] pointer_reg
-   [1:0] type_reg  ───►│                       │
-                       └───────────────────────┘
+Propagation order
 ```
 
----
+## Cost Field
 
-# Directional Pointer Bit-Mapping
+Measures:
 
-The directional back-pointer matches the following 2-bit binary configurations:
+```text
+Traversal expense
+```
 
-- `2'b00` (`DIR_NORTH`) → shortest pathway approaches from the upper adjacent node
-- `2'b01` (`DIR_SOUTH`) → shortest pathway approaches from the lower adjacent node
-- `2'b10` (`DIR_EAST`) → shortest pathway approaches from the right adjacent node
-- `2'b11` (`DIR_WEST`) → shortest pathway approaches from the left adjacent node
-
----
-
-# Interconnect Mesh Architecture & Hardcoded Layout
-
-The top-level `wave_grid_8x8.v` module instantiates 64 unique copies of the processing element using a Verilog `generate` loop block, flattening the structural interaction network into dense directional buses.
+Weighted terrain decouples these quantities.
 
 ---
 
-## Hardcoded Grid Geometry Configuration
+# Hardware Backtrace Generation
 
-The internal matrix establishes a fixed layout test case mapped onto raw grid coordinates:
+Each cell stores a directional breadcrumb:
 
-- Source Node (`START`) → `(r == 0 && c == 0)` (Top-Left)
-- Destination Node (`TARGET`) → `(r == 7 && c == 7)` (Bottom-Right)
-- Obstacle Wall Structure → `r == 3` across columns `c == 1` through `c == 6`
+```text
+00 = North
+01 = South
+10 = East
+11 = West
+```
 
-This creates a solid horizontal barrier in the center of the grid, forcing the wavefront to split and round the edges.
+This allows a host processor to reconstruct the discovered route by tracing pointers backward from the destination node.
 
 ---
 
-# Boundary Condition Isolation
+# Accelerator Readback Buses
 
-To prevent edge cells from reading invalid floating data, the array structure dynamically isolates perimeter nodes by grounding disconnected inputs.
+The fabric exposes complete state snapshots.
 
 ```verilog
-.north_cost((r == 0) ? 6'b0 :
-            cost_bus[idx_n*COST_WIDTH +: COST_WIDTH]),
+wave_out_bus
+cost_out_bus
+pointer_out_bus
+timestamp_out_bus
 ```
 
----
-
-# Hardware Replication & Simulation Protocol
-
-Run this execution workflow inside your Linux terminal environment to compile the simulation and verify the spatial propagation wavefront using Icarus Verilog.
+These buses provide visibility into the entire computational state of the accelerator.
 
 ---
 
-## Project Structure
+# Verification Summary
+
+| Testbench | Purpose | Status |
+|------------|----------|---------|
+| TB1 | Uniform Propagation | PASS |
+| TB2 | Obstacle Routing | PASS |
+| TB3 | Weighted Terrain | PASS |
+| TB4 | Timestamp Stability | PASS |
+| TB5 | Runtime Reconfiguration | PASS |
+
+---
+
+# Repository Structure
 
 ```text
-openlane/designs/wave_router/
+wavefront-routing-fabric/
+
 ├── src/
-│   ├── wave_cell.v
-│   └── wave_grid_8x8.v
-└── tb/
-    └── tb_wave_router.v
+│   ├── wave_cell_v2.v
+│   ├── wave_grid_8x8_v2.v
+│   └── tb_wave_grid_v2.v
+│
+├── docs/
+│   ├── wave_cell_v2.png
+│   ├── wave_grid_v2.png
+│   └── architecture_overview.png
+│
+├── gifs/
+│   ├── TB1_uniform_propagation.gif
+│   ├── TB2_obstacle_bending.gif
+│   ├── TB3_weighted_terrain.gif
+│   └── TB5_runtime_remapping.gif
+│
+└── README.md
 ```
 
 ---
 
-# Part 1: Project Subdirectory Setup
+# Future Directions
 
-```bash
-# Enter Windows Subsystem for Linux
-wsl
-
-# Initialize design source subdirectories
-cd ~/OpenLane/designs
-
-mkdir -p wave_router/src
-
-cd wave_router/src
-```
+- 16×16 and 32×32 mesh scaling
+- Hardware path extraction engines
+- DMA-based host interface
+- Adaptive terrain learning
+- Timestamp-driven routing heuristics
+- FPGA implementation
+- OpenLane / SKY130 ASIC synthesis
+- Comparison with neuromorphic timestamp-routing architectures
 
 ---
 
-# Part 2: Building the Processing Node Elements
+# License
 
-```bash
-nano wave_cell.v
-```
-
-Paste the complete `wave_cell` Verilog source code into the editor.
-
-Save:
-```text
-CTRL + O
-```
-
-Exit:
-```text
-CTRL + X
-```
-
----
-
-# Part 3: Assembling the Routing Interconnect Fabric
-
-```bash
-nano wave_grid_8x8.v
-```
-
-Paste the complete `wave_grid_8x8` fabric source code into the editor.
-
-Save and exit.
-
----
-
-# Part 4: Compilation and Verification Execution
-
-```bash
-# Compile structural Verilog layers via Icarus Verilog
-
-iverilog -o sim_wave_router \
-wave_cell.v \
-wave_grid_8x8.v \
-../tb/tb_wave_router.v
-
-# Execute compiled structural simulation
-
-vvp sim_wave_router
-```
-
----
-
-# Future Implementations
-
-- Dynamic SPI runtime grid-type configuration registers
-- High-dimensional 3D mesh fabric extensions
-- Variable-cost routing weights for variable terrain mapping
-- Dynamic backtracking state-machines implemented directly in silicon hardware
-- Massively scaled 64×64 processing element evaluation arrays
+MIT License
 
 ---
 
